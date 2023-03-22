@@ -153,8 +153,30 @@ class UIHierarchy(object):
     def __init__(self, hierarchy):
         self.rootNode = hierarchy['activity']['root']
 
-    def add_id():
-        pass
+    def add_id(self, counter):
+        self.rootNode["id"] = counter
+        counter += 1
+        if "children" in self.rootNode.keys():
+            for child in self.rootNode["children"]:
+                counter = self.add_id(child, counter)
+        return counter
+
+    def add_parent(self, parent_id=None):
+        self.rootNode['parent'] = parent_id
+        if 'children' in self.rootNode:
+            for child in self.rootNode['children']:
+                self.add_parent(child, self.rootNode['id'])
+
+    def isTerminalNode(self, node):
+        return len(node['children']) == 0
+    
+    def nodeAfterAction(self, node, action):
+        if action == 'pop':
+            return node['parent']
+        elif action == 'arc':
+            return node['children'][0]
+        else:
+            return node
 
 
 class Node(object):
@@ -262,21 +284,19 @@ data = {
     ]
 }
 
+def flatten(node, parent_id=None):
+    flat_node = dict(node)
+    flat_node['parent'] = parent_id
+    flat_children = []
+    if 'children' in flat_node:
+        children = flat_node.pop('children')
+        for child in children:
+            flat_children.extend(flatten(child, node['id']))
+    flat_node.update(dict(children=flat_children))
+    return [flat_node]
 
-def add_id_ancestor(obj, ancestor=[]):
-    if isinstance(obj, dict):
-        if 'tag' in obj:
-            obj['id'] = id(obj)
-            obj['ancestor'] = ancestor[:]
-            ancestor.append(obj['id'])
-        for key, value in obj.items():
-            add_id_ancestor(value, ancestor)
-    elif isinstance(obj, list):
-        for item in obj:
-            add_id_ancestor(item, ancestor)
-            ancestor.pop()
-
-
-add_id_ancestor(data)
-
-# 重新形成node类 hierarchy类
+flat_data = []
+for node in flatten(data):
+    flat_data.extend(node['children'])
+    del node['children']
+    flat_data.append(node)

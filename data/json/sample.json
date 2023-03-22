@@ -1,0 +1,44 @@
+{
+    "tag": "button",
+    "children": [
+        {
+            "tag": "span",
+            "children": [
+                {
+                    "tag": "table",
+                    "id": 3,
+                    "parent": 2
+                },
+                {
+                    "tag": "span",
+                    "children": [
+                        {
+                            "tag": "file",
+                            "id": 5,
+                            "parent": 4
+                        }
+                    ],
+                    "id": 4,
+                    "parent": 2
+                }
+            ],
+            "id": 2,
+            "parent": 1
+        },
+        {
+            "tag": "span",
+            "children": [
+                {
+                    "tag": "image",
+                    "id": 7,
+                    "parent": 6
+                }
+            ],
+            "id": 6,
+            "parent": 1
+        }
+    ],
+    "id": 1,
+    "parent": "None"
+}
+
