@@ -93,7 +93,7 @@ def get_oracle(stack, buffer, deps, gold_deps):
     return None
 
 def train(parser, epochs, data):
-    for i in range(epochs):
+    for _ in range(epochs):
         for sentence, tags, gold_deps in data:
             # Initialize empty stack, buffer, and dependencies
             stack = []
@@ -148,14 +148,19 @@ def train(parser, epochs, data):
 #             model.train(action) 
 #         node=node.nodeAfterAction(action)
 
+
 class UIHierarchy(object): 
     def __init__(self, hierarchy):
         self.rootNode = hierarchy['activity']['root']
-        
+
+    def add_id():
+        pass
+
+
 class Node(object):
     def __init__(self, node):
         self.node = node
-        self.children = node['children']
+        self.children = node['children'] if 'children' in node.keys() else []
         
     def is_terminal(self):
         return len(self.children) == 0
@@ -168,6 +173,7 @@ class Node(object):
             return self.children[0]
         else:
             return self.node
+
 
 class Optimal(list):
     def __init__(self):
@@ -189,14 +195,16 @@ class Optimal(list):
             return 'arc'
         else:
             return 'emit'
-    
+
+
+# oracle main loop
 example = UIHierarchy(data)
 node = Node(example.rootNode)
 
 while not node.is_terminal():
     # init
     optimal = Optimal()
-    
+
     # get optimal actions
     if node.is_terminal():
         optimal.add_pop_action()
@@ -204,10 +212,10 @@ while not node.is_terminal():
         for child in node.children:
             subnode = Node(child)
             if subnode.is_terminal():
-                optimal.add_arc_action(child) # change to id
+                optimal.add_arc_action(child) # TODO: change to id
             else:
                 optimal.add_emit_action()
-                
+
     # TODO: Training
     # if dynamicTraining: 
     #     model.train(optimal) 
@@ -219,6 +227,56 @@ while not node.is_terminal():
     #     action = optimal.get_canonical_action()
     #     model.train(action) 
     action = optimal.get_canonical_action()
-        
+
     # update node
     node = node.after_action(action)
+
+
+data = {
+    "tag": "button",
+    "children": [
+        {
+            "tag": "span",
+            "children": [
+                {
+                    "tag": "table",
+                },
+                {
+                    "tag": "span",
+                    "children": [
+                        {
+                            "tag": "file",
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "tag": "span",
+            "children": [
+                {
+                    "tag": "image",
+                },
+            ]
+        }
+    ]
+}
+
+
+def add_id_ancestor(obj, ancestor=[]):
+    if isinstance(obj, dict):
+        if 'tag' in obj:
+            obj['id'] = id(obj)
+            obj['ancestor'] = ancestor[:]
+            ancestor.append(obj['id'])
+        for key, value in obj.items():
+            add_id_ancestor(value, ancestor)
+    elif isinstance(obj, list):
+        for item in obj:
+            add_id_ancestor(item, ancestor)
+            ancestor.pop()
+
+
+add_id_ancestor(data)
+
+# 重新形成node类 hierarchy类

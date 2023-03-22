@@ -24,3 +24,36 @@ for example in dataset:
         model.train(action) 
     node=node.nodeAfterAction(action)
 ```
+
+
+```json
+{
+    "tag": "button",
+    "children": [
+        {
+            "tag": "span",
+            "children": [
+                {
+                    "tag": "table",
+                },
+                {
+                    "tag": "span",
+                    "children": [
+                        {
+                            "tag": "file",
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "tag": "span",
+            "children": [
+                {
+                    "tag": "image",
+                },
+            ]
+        }
+    ]
+}
+```
